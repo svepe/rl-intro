@@ -2,10 +2,11 @@
 
 This repository contains implementations of a few introductory RL algorithms.
 
-1. Value Iteration 
+1. Value Iteration
 '''
 python value_iteration.py
 '''
+
 2. Q-learning
 '''
 python q_learning.py
