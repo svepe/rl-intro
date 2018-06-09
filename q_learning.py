@@ -14,6 +14,7 @@ epsilon = 0.1
 def rollout(env, Q, train=False):
     episode_reward = 0
 
+    # Get initial state
     state = env.reset()
     for t in range(env.unwrapped.spec.max_episode_steps):
         # Choose action
@@ -50,7 +51,7 @@ def rollout(env, Q, train=False):
 
 
 def plot(Q):
-    V = np.sum(Q, 1).reshape(4, 4)
+    V = np.max(Q, 1).reshape(4, 4)
     # Visualise resulting values
     plt.imshow(V, interpolation='none', aspect='auto', cmap='RdYlGn')
     plt.xticks([0, 1, 2, 3])
@@ -74,11 +75,13 @@ def main():
     episodes = int(1e4)
     average_reward = 0.
     for e in range(episodes):
-        # Train
+        # Train with e-greedy policy
         rollout(env, Q, train=True)
 
-        # Test
+        # Test with greedy policy
         episode_reward = rollout(env, Q, train=False)
+
+        # Keep an estimate of the average reward for the past 100 episodes
         average_reward = 0.99 * average_reward + 0.01 * episode_reward
 
         # Reward threshold is 0.78 (theoretical optimum is 0.81)
