@@ -55,9 +55,10 @@ def plot(Q):
     # Visualise resulting values
     plt.imshow(V, interpolation='none', aspect='auto', cmap='RdYlGn')
     plt.xticks([0, 1, 2, 3])
-    plt.yticks([0, 1, 2], ['2', '1', '0'])
+    plt.yticks([0, 1, 2, 3])
     plt.colorbar()
 
+    # left, down, right, up
     arrows = ['\u25c0', '\u25bc', '\u25b6', '\u25b2']
     for (i, j), v in np.ndenumerate(np.around(V, 2)):
         a = np.argmax(Q[i])
