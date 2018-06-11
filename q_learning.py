@@ -52,6 +52,12 @@ def rollout(env, Q, train=False):
 
 def plot(Q):
     V = np.max(Q, 1).reshape(4, 4)
+
+    # Handle terminal states
+    for hole in [(1, 1), (1, 3), (2, 3), (3, 0)]:
+        V[hole] = 0.
+    V[3, 3] = 1.
+
     # Visualise resulting values
     plt.imshow(V, interpolation='none', aspect='auto', cmap='RdYlGn')
     plt.xticks([0, 1, 2, 3])
@@ -61,8 +67,15 @@ def plot(Q):
     # left, down, right, up
     arrows = ['\u25c0', '\u25bc', '\u25b6', '\u25b2']
     for (i, j), v in np.ndenumerate(np.around(V, 2)):
-        a = np.argmax(Q[i * 4 + j])
-        label = arrows[a] + "\n" + str(v)
+        idx = i * 4 + j
+        a = np.argmax(Q[idx])
+
+        # Handle terminal states
+        if idx in {5, 7, 11, 12, 15}:
+            label = str(v)
+        else:
+            label = arrows[a] + '\n' + str(v)
+
         plt.gca().text(j, i, label, ha='center', va='center')
 
     plt.show()
@@ -73,7 +86,7 @@ def main():
 
     # Initialise Q to small values around 0
     Q = np.random.normal(
-        scale=1e-6,
+        scale=1e-2,
         size=(env.observation_space.n, env.action_space.n))
 
     episodes = int(1e4)
