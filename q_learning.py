@@ -34,10 +34,10 @@ def rollout(env, Q, train=False):
             Q_sa = Q[state, action]
 
             # Find the value of the next state
-            next_Q_s = np.max(Q[next_state])
+            next_V_s = np.max(Q[next_state])
 
             # Calculate the updated state action value
-            new_Q_sa = Q_sa + alpha * (reward + gamma * next_Q_s - Q_sa)
+            new_Q_sa = Q_sa + alpha * (reward + gamma * next_V_s - Q_sa)
 
             # Write the updated value
             Q[state, action] = new_Q_sa
@@ -61,7 +61,7 @@ def plot(Q):
     # left, down, right, up
     arrows = ['\u25c0', '\u25bc', '\u25b6', '\u25b2']
     for (i, j), v in np.ndenumerate(np.around(V, 2)):
-        a = np.argmax(Q[i])
+        a = np.argmax(Q[i * 4 + j])
         label = arrows[a] + "\n" + str(v)
         plt.gca().text(j, i, label, ha='center', va='center')
 
@@ -71,7 +71,10 @@ def plot(Q):
 def main():
     env = gym.make('FrozenLake-v0')
 
-    Q = np.ones((env.observation_space.n, env.action_space.n))
+    # Initialise Q to small values around 0
+    Q = np.random.normal(
+        scale=1e-6,
+        size=(env.observation_space.n, env.action_space.n))
 
     episodes = int(1e4)
     average_reward = 0.
